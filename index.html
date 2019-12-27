@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="de">
+    <title>Idas Kalkulator</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<style type="text/css">
+body {
+}
+.wrong { color: red; }
+.right { color: green;}
+table, td, th {
+  border: solid;
+  border-collapse: collapse;
+  padding: 5px;
+}
+div {
+    padding: 15px;
+}
+
+</style>
+    <script type="text/javascript">
+        'use strict';
+
+        $(document).ready(function(){
+            $("#uni").hide();
+            $("#idaInput").focus();
+            genNewCalc();
+        });
+
+        var calc_result;
+        var good=0;
+        var bad=0;
+
+        function onInput(event)
+        {     
+           if (event.keyCode != 13) return;
+           const idaInput = $("#idaInput").val();
+           if ( idaInput === '' ) return;
+           const idaNumber = parseInt(idaInput,10);
+           if ( isNaN(idaNumber) ) return;
+
+           validate( idaNumber, $("#calc").text() );
+           genNewCalc();
+           $("#idaInput").val('');
+           
+        }
+        
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        function genNewCalc() {
+            var a = getRandomInt(10);
+            var b = getRandomInt(10);
+            var op;
+            if ( a % 2 == 0) {
+                op = "+";
+                calc_result = a + b;
+            }
+            else {
+                op = "-";
+                if ( a < b ) {
+                    b = [a, a = b][0];
+                }
+                calc_result = a - b;
+            }
+            $("#calc").text(a + " " + op + " " + b + " = " );
+        }
+        function validate(resultToCheck, calculation) {
+            var sign;
+            var cl;
+            if ( calc_result == resultToCheck) {
+                ++good;
+                cl="right";
+                sign='&#x2714;&#xFE0F;';
+                $("#uni").show();
+                setTimeout(function() { $("#uni").hide(); }, 500 );
+            }
+            else {
+                ++bad;
+                cl='wrong';
+                sign = '&#x2639;&#xFE0F;';  
+            }
+            $("#results tbody").after('<tr class="' + cl + '">'
+                + '<td>' + calculation   + '</td>'
+                + '<td>' + resultToCheck + '</td>'
+                + '<td>' + sign + '</td>'
+                + '</tr>');
+            $("#stats").text('✔️ ('+good+') | ☹️ ('+bad+')' )
+        }
+        </script>
+<h1>Idas kleiner Rechenzettel</h1>
+ <body>
+    <div style="font-size: x-large;">
+        <a id="calc"></a>
+        <input id="idaInput" onkeypress="onInput(event)" style="font-size: x-large;" />
+    </div>
+    <div style="float: left;">
+        <table id="results">
+            <thead><tr><th>Rechnung</th><th>Du hast gerechnet</th><th id="stats"></th></tr></thead>
+            <tbody></tbody>
+        </table> 
+    </div>
+    <div>
+        <img id="uni" src="images/uni_small.jpg"/>
+   </div>
+</body>
+</html>
